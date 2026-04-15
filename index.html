@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Open Directory Finder (Prototype)</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      padding: 40px;
+      background: #111;
+      color: #fff;
+    }
+    input {
+      padding: 10px;
+      width: 300px;
+    }
+    button {
+      padding: 10px 20px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    iframe {
+      margin-top: 30px;
+      width: 100%;
+      height: 500px;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Open Directory Finder (Prototype)</h2>
+
+<input type="text" id="query" placeholder="Enter search">
+<button onclick="search()">Search</button>
+
+<br>
+
+<iframe id="frame"></iframe>
+
+<script>
+function search() {
+  let q = document.getElementById("query").value;
+
+  // same logic used by tools
+  let searchUrl = "https://www.google.com/search?q=" +
+    encodeURIComponent('intitle:"index of" ' + q);
+
+  document.getElementById("frame").src = searchUrl;
+}
+</script>
+
+</body>
+</html>
