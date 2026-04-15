@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Readnexa Finder - Multi Engine</title>
+  <title>Readnexa Finder - Responsive Edition</title>
 
   <style>
     body {
@@ -12,7 +12,8 @@
       background: #f8f9fa;
       color: #333;
       text-align: center;
-      padding-top: 100px;
+      padding: 50px 20px 20px 20px; /* Mobile ke liye padding adjust ki hai */
+      box-sizing: border-box;
     }
 
     .logo {
@@ -34,6 +35,7 @@
       font-size: 14px;
     }
 
+    /* PC Layout (Default) */
     .search-bar-wrapper {
       display: flex;
       justify-content: center;
@@ -41,22 +43,21 @@
       max-width: 850px;
       margin: 0 auto;
       border: 1px solid #dfe1e5;
-      border-radius: 4px;
+      border-radius: 8px;
       background: #fff;
-      box-shadow: 0 1px 6px rgba(32,33,36,.28);
+      box-shadow: 0 4px 10px rgba(32,33,36,.1);
+      overflow: hidden;
     }
 
-    /* Common styles for all inputs in the bar */
     .search-bar-wrapper select, 
     .search-bar-wrapper input, 
     .search-bar-wrapper button {
       border: none;
-      padding: 12px 15px;
-      font-size: 15px;
+      padding: 15px;
+      font-size: 16px;
       outline: none;
     }
 
-    /* Filetype Dropdown */
     #filetype {
       background: #fff;
       color: #3c4043;
@@ -64,7 +65,6 @@
       cursor: pointer;
     }
 
-    /* Search Engine Dropdown (Grey background like screenshot) */
     #engine {
       background: #e9ecef;
       color: #3c4043;
@@ -77,19 +77,52 @@
       flex-grow: 1;
       background: #fff;
       color: #202124;
-      min-width: 300px;
+      min-width: 200px;
     }
 
     .search-btn {
       background: #000;
       color: #fff;
       cursor: pointer;
-      padding: 12px 25px;
+      padding: 15px 30px;
       font-weight: bold;
+      transition: background 0.3s;
     }
 
     .search-btn:hover {
       background: #333;
+    }
+
+    /* =========================================
+       📱 MOBILE LAYOUT (Responsive CSS) 
+       Ye sirf tab chalega jab screen chhoti hogi
+       ========================================= */
+    @media (max-width: 768px) {
+      .logo {
+        font-size: 40px; /* Mobile par logo thoda chhota */
+      }
+      
+      .search-bar-wrapper {
+        flex-direction: column; /* Line ki jagah ek ke niche ek */
+        background: transparent;
+        box-shadow: none;
+        border: none;
+      }
+
+      .search-bar-wrapper select, 
+      .search-bar-wrapper input, 
+      .search-bar-wrapper button {
+        width: 100%; /* Mobile par full width */
+        margin-bottom: 12px;
+        border-radius: 8px; /* Mobile par sabke rounded corners */
+        border: 1px solid #dfe1e5 !important; /* Mobile par sabme border */
+        box-sizing: border-box;
+      }
+
+      .search-btn {
+        padding: 16px;
+        font-size: 18px;
+      }
     }
   </style>
 
@@ -102,13 +135,12 @@
 <p class="subtitle">Get direct download links for almost anything.</p>
 
 <div class="search-bar-wrapper">
-  
   <select id="filetype">
     <option value="other">Choose Filetype</option>
     <option value="video">🎬 TV/Movies/Video</option>
     <option value="books">📚 Books</option>
     <option value="music">🎵 Music</option>
-    <option value="software">💿 Software/ISO/DMG/Games</option>
+    <option value="software">💿 Software/Games</option>
     <option value="images">🖼️ Images</option>
     <option value="other">⚙️ Other</option>
   </select>
@@ -121,9 +153,9 @@
     <option value="filepursuit">📁 FilePursuit</option>
   </select>
 
-  <input type="text" id="query" placeholder="Search anything e.g The.Blacklist.S01.E01">
+  <input type="text" id="query" placeholder="Search e.g. The Matrix...">
 
-  <button class="search-btn" onclick="search()">🔍</button>
+  <button class="search-btn" onclick="search()">Search 🔍</button>
 </div>
 
 <script>
@@ -140,7 +172,6 @@ function search() {
 
   let query = "";
 
-  // 1. Dork Logic banayenge (Agar engine FilePursuit NAHI hai)
   if (engine !== "filepursuit") {
     if (type === "video") {
       query = `${q} +(mkv|mp4|avi|mov|mpg|wmv) -inurl:(jsp|pl|php|html|aspx|htm|cf|shtml) intitle:index.of -inurl:(listen77|mp3raid|mp3toss|mp3drug|index_of|wallywashis)`;
@@ -161,11 +192,9 @@ function search() {
       query = `${q} -inurl:(jsp|pl|php|html|aspx|htm|cf|shtml) intitle:index.of -inurl:(listen77|mp3raid|mp3toss|mp3drug|index_of|wallywashis)`;
     }
   } else {
-    // Agar engine FilePursuit hai, toh sirf query bhejo bina kisi dork ke
     query = q;
   }
 
-  // 2. Search Engine ke hisaab se URL decide karenge
   let baseUrl = "";
   
   if (engine === "google" || engine === "googol") {
@@ -173,22 +202,31 @@ function search() {
   } else if (engine === "startpage") {
     baseUrl = "https://www.startpage.com/do/dsearch?query=";
   } else if (engine === "searx") {
-    baseUrl = "https://searx.be/search?q="; // Public Searx instance
+    baseUrl = "https://searx.be/search?q="; 
   } else if (engine === "filepursuit") {
     baseUrl = "https://filepursuit.com/pursuit?q=";
   }
 
   let finalUrl = baseUrl + encodeURIComponent(query);
 
-  // 3. Tab open karenge
-  const link = document.createElement('a');
-  link.href = finalUrl;
-  link.target = '_blank';
-  link.rel = 'noopener noreferrer'; 
-  
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  // 📱 SMART DEVICE DETECTION
+  if (window.innerWidth <= 768) {
+    // Agar Mobile hai, toh Popup ki jagah Secure Tab kholega (Best for phones)
+    const link = document.createElement('a');
+    link.href = finalUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer'; 
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } else {
+    // Agar PC hai, toh Center Floating Popup kholega
+    let width = window.innerWidth * 0.8; 
+    let height = window.innerHeight * 0.8; 
+    let left = (screen.width - width) / 2;
+    let top = (screen.height - height) / 2;
+    window.open(finalUrl, "ReadnexaSearchPopup", `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`);
+  }
 }
 
 document.getElementById("query").addEventListener("keypress", function(event) {
