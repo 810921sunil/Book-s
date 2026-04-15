@@ -1,53 +1,173 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Open Directory Finder (Prototype)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Readnexa Finder - Clone</title>
+
   <style>
     body {
-      font-family: Arial;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      color: #333;
       text-align: center;
-      padding: 40px;
-      background: #111;
-      color: #fff;
+      padding-top: 100px;
     }
-    input {
-      padding: 10px;
-      width: 300px;
+
+    .logo {
+      font-size: 50px;
+      font-weight: bold;
+      color: #4285f4; /* Google Blue */
+      margin-bottom: 10px;
     }
-    button {
-      padding: 10px 20px;
-      margin-left: 10px;
+    
+    .logo span:nth-child(2) { color: #ea4335; } /* Red */
+    .logo span:nth-child(3) { color: #fbbc05; } /* Yellow */
+    .logo span:nth-child(4) { color: #4285f4; } /* Blue */
+    .logo span:nth-child(5) { color: #34a853; } /* Green */
+    .logo span:nth-child(6) { color: #ea4335; } /* Red */
+
+    p.subtitle {
+      color: #555;
+      margin-bottom: 40px;
+      font-size: 14px;
+    }
+
+    .search-bar-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      max-width: 800px;
+      margin: 0 auto;
+      border: 1px solid #dfe1e5;
+      border-radius: 4px;
+      background: #fff;
+      box-shadow: 0 1px 6px rgba(32,33,36,.28);
+    }
+
+    .search-bar-wrapper select, 
+    .search-bar-wrapper input, 
+    .search-bar-wrapper button {
+      border: none;
+      padding: 12px 15px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    #filetype {
+      background: #f1f3f4;
+      color: #3c4043;
+      border-right: 1px solid #dfe1e5;
       cursor: pointer;
     }
-    iframe {
-      margin-top: 30px;
-      width: 100%;
-      height: 500px;
-      border: none;
+
+    .engine-label {
+      background: #fff;
+      color: #5f6368;
+      border-right: 1px solid #dfe1e5;
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+    }
+
+    #query {
+      flex-grow: 1;
+      background: #fff;
+      color: #202124;
+      min-width: 300px;
+    }
+
+    .search-btn {
+      background: #000;
+      color: #fff;
+      cursor: pointer;
+      padding: 12px 25px;
+      font-weight: bold;
+    }
+
+    .search-btn:hover {
+      background: #333;
     }
   </style>
+
 </head>
 <body>
 
-<h2>Open Directory Finder (Prototype)</h2>
+<div class="logo">
+  <span>R</span><span>e</span><span>a</span><span>d</span><span>n</span><span>e</span><span>x</span><span>a</span>
+</div>
+<p class="subtitle">Get direct download links for almost anything.</p>
 
-<input type="text" id="query" placeholder="Enter search">
-<button onclick="search()">Search</button>
+<div class="search-bar-wrapper">
+  <select id="filetype">
+    <option value="other">Choose Filetype</option>
+    <option value="video">🎬 TV/Movies/Video</option>
+    <option value="books">📚 Books</option>
+    <option value="music">🎵 Music</option>
+    <option value="software">💿 Software/ISO/DMG/Games</option>
+    <option value="images">🖼️ Images</option>
+    <option value="other">⚙️ Other</option>
+  </select>
 
-<br>
+  <div class="engine-label">🔍 Google ▾</div>
 
-<iframe id="frame"></iframe>
+  <input type="text" id="query" placeholder="Search anything e.g The.Blacklist.S01.E01">
+
+  <button class="search-btn" onclick="search()">🔍</button>
+</div>
 
 <script>
 function search() {
-  let q = document.getElementById("query").value;
+  let q = document.getElementById("query").value.trim();
+  let type = document.getElementById("filetype").value;
 
-  // same logic used by tools
-  let searchUrl = "https://www.google.com/search?q=" +
-    encodeURIComponent('intitle:"index of" ' + q);
+  if (!q) {
+    alert("Please enter something to search!");
+    document.getElementById("query").focus();
+    return;
+  }
 
-  document.getElementById("frame").src = searchUrl;
+  let query = "";
+
+  // These are the exact advanced Dorks used by the website in your screenshot
+  if (type === "video") {
+    query = `${q} +(mkv|mp4|avi|mov|mpg|wmv) -inurl:(jsp|pl|php|html|aspx|htm|cf|shtml) intitle:index.of -inurl:(listen77|mp3raid|mp3toss|mp3drug|index_of|wallywashis)`;
+  } 
+  else if (type === "books") {
+    query = `${q} +(mobi|cbz|cbr|cbc|chm|epub|fb2|lit|lrf|odt|pdf|prc|pdb|pml|rb|snb|tcr|txt) -inurl:(jsp|pl|php|html|aspx|htm|cf|shtml) intitle:index.of -inurl:(listen77|mp3raid|mp3toss|mp3drug|index_of|wallywashis)`;
+  } 
+  else if (type === "music") {
+    query = `${q} +(mp3|wav|ac3|ogg|flac|wma|m4a) -inurl:(jsp|pl|php|html|aspx|htm|cf|shtml) intitle:index.of -inurl:(listen77|mp3raid|mp3toss|mp3drug|index_of|wallywashis)`;
+  } 
+  else if (type === "software") {
+    query = `${q} +(exe|iso|tar|rar|zip|apk|dmg) -inurl:(jsp|pl|php|html|aspx|htm|cf|shtml) intitle:index.of -inurl:(listen77|mp3raid|mp3toss|mp3drug|index_of|wallywashis)`;
+  } 
+  else if (type === "images") {
+    query = `${q} +(jpg|png|bmp|gif|tif|tiff|psd) -inurl:(jsp|pl|php|html|aspx|htm|cf|shtml) intitle:index.of -inurl:(listen77|mp3raid|mp3toss|mp3drug|index_of|wallywashis)`;
+  } 
+  else {
+    query = `${q} -inurl:(jsp|pl|php|html|aspx|htm|cf|shtml) intitle:index.of -inurl:(listen77|mp3raid|mp3toss|mp3drug|index_of|wallywashis)`;
+  }
+
+  let url = "https://www.google.com/search?q=" + encodeURIComponent(query);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer'; 
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
+
+document.getElementById("query").addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault(); 
+    search();
+  }
+});
 </script>
 
 </body>
